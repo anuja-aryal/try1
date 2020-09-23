@@ -1,30 +1,26 @@
-import React from 'react';
+import React,{useEffect,useState} from 'react';
 import axios from 'axios';
 
 
-class ResourceList extends React.Component{
-    state ={resources: []};
-
-    async  componentDidMount(){
-        const response= await axios.get
-        (`https://jsonplaceholder.typicode.com/${this.props.resource}`
-        );
-
-        this.setState({resources: response.data});
-    }
-
-    async componentDidUpdate(prevProps){
-        if(prevProps.resource!== this.props.resource){
-            const response= await axios.get(
-                `https://jsonplaceholder.typicode.com/${this.props.resource}`
+const ResourceList =({resource})=>{
+    const [resources, setResources] =useState([]);
+   
+    useEffect(
+        ()=>{
+            (async resource =>{
+                const response= await axios.get
+                (`https://jsonplaceholder.typicode.com/${resource}`
                 );
-                this.setState({resouces: response.data});
-        }    
-    }
+                setResources(response.data);
+            })(resource)
+    },
+    [resource])
+    return (
+     <ul>{resources.map(record=> 
+     <li key={record.id}>{record.title}
+     </li>)}
+        </ul>
+    );
+};
 
-    render(){ 
-    return <div>{this.state.resources.length}</div>;
-    }
-}
-
-export default ResourceList;
+export default ResourceList;   
